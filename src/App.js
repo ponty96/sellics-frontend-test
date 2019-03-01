@@ -44,6 +44,29 @@ class App extends Component {
 		this.setState({ [key]: value });
 	};
 
+	componentDidUpdate(prevProps, prevState) {
+		const oldStatePropertiesToCompare = {
+			page: prevState.page,
+			sortType: prevState.sortType,
+			groupBy: prevState.groupBy,
+			filterBy: prevState.filterBy,
+			unParsedApiReviews: prevState.unParsedApiReviews
+		};
+
+		const newStatePropertiesToCompare = {
+			page: this.state.page,
+			sortType: this.state.sortType,
+			groupBy: this.state.groupBy,
+			filterBy: this.state.filterBy,
+			unParsedApiReviews: this.state.unParsedApiReviews
+		};
+		if (!_.isEqual(oldStatePropertiesToCompare, newStatePropertiesToCompare)) {
+			this.setState({
+				reviews: this.parseApiResults(this.state.unParsedApiReviews)
+			});
+		}
+	}
+
 	render() {
 		const reviews = this.state.reviews.map((review, i) => {
 			return <ReviewGroup reviews={review.reviews} group={review.key} key={i} />;
