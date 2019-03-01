@@ -21,7 +21,7 @@ const ReviewItem = ({ reviewCreated, stars, author, title, content }) => (
 			<div className="col-md-4 col-lg-2 col-sm-3 col-xs-5 item">
 				<span>STARS</span>
 				<p>
-					{range(0, stars).map((item, i) => {
+					{range(1, stars).map((item, i) => {
 						return <i className="mdi mdi-star" key={i}/>;
 					})}
 				</p>
