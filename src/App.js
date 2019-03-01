@@ -11,11 +11,21 @@ import {
 } from './app.styles';
 import ReviewGroup from './components/ReviewItem';
 import StarSortItem from './components/StarSortItem';
+import { getReviews } from './functions';
 
 class App extends Component {
+	state = {
+		reviews: [],
+		hasMore: false,
+		page: 1
+	};
+
+	async componentDidMount() {
+		const { hasMore, reviews } = await getReviews(this.state.page);
+	}
 	render() {
 		const reviews = [ 1, 2, 3 ].map((item, i) => {
-			return <ReviewGroup reviews={[]}/>;
+			return <ReviewGroup reviews={[]} />;
 		});
 		return (
 			<AppWrapper>
@@ -35,7 +45,11 @@ class App extends Component {
 								</div>
 								<div className="col-xs-6 col-md-6">
 									<Select>
-										<option>Order by</option>
+										<option value="" selected={true}>
+											Order by
+										</option>
+										<option value="mrf">Most recent first</option>
+										<option value="mrl">Most recent last</option>
 									</Select>
 								</div>
 							</div>

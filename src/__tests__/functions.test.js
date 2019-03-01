@@ -1,4 +1,11 @@
-import { sort, sortMostRecentFirst, sortMostRecentLast, filterReviews } from '../functions';
+import {
+	sort,
+	sortMostRecentFirst,
+	sortMostRecentLast,
+	filterReviews,
+	getReviewTimeAtrr,
+	groupReviews
+} from '../functions';
 import { PAGE_1_DATA } from '../dummy-data';
 
 const REVIEWS = PAGE_1_DATA.reviews;
@@ -47,6 +54,19 @@ test('filters reviews based on stars', () => {
 	expect(threeStarReviews).toHaveLength(6);
 	expect(fourStarReviews).toHaveLength(1);
 
-	expect(fiveStarReviews.random().stars).toEqual(5)
-	expect(fourStarReviews.random().stars).toEqual(4)
+	expect(fiveStarReviews.random().stars).toEqual(5);
+	expect(fourStarReviews.random().stars).toEqual(4);
+});
+
+test('returns the right review time attribute', () => {
+	expect(getReviewTimeAtrr(1517961600000, 'day')).toBe('Wednesday');
+	expect(getReviewTimeAtrr(1517961600000, 'year')).toBe('2018');
+	expect(getReviewTimeAtrr(1517961600000, 'month')).toBe('February');
+	expect(getReviewTimeAtrr(1517961600000, 'week')).toBe(6);
+});
+
+test('groups reviews properly', () => {
+	expect(groupReviews(REVIEWS, 'year')).toHaveLength(2);
+	expect(groupReviews(REVIEWS, 'year')[0].type).toBe('year');
+	expect(groupReviews(REVIEWS, 'week')[0].type).toBe('week');
 });
