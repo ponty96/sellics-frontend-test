@@ -28,15 +28,6 @@ class App extends Component {
 		unParsedApiReviews: []
 	};
 
-	async componentDidMount() {
-		const { hasMore, reviews } = await getReviews(this.state.page);
-		this.setState({
-			reviews: this.parseApiResults(reviews),
-			hasMore,
-			unParsedApiReviews: reviews
-		});
-	}
-
 	parseApiResults = (reviews) => {
 		const filteredReviews = filterReviews(reviews, this.state.filterBy);
 		const groupedReviews = groupReviews(filteredReviews, this.state.groupBy);
@@ -57,6 +48,42 @@ class App extends Component {
 		this.setState({
 			...DEFAULT_FILTER_PARAMS
 		});
+	};
+
+	async componentDidMount() {
+		window.addEventListener('scroll', this.onScroll, false);
+		const { hasMore, reviews } = await getReviews(this.state.page);
+		this.setState({
+			reviews: this.parseApiResults(reviews),
+			hasMore,
+			unParsedApiReviews: reviews
+		});
+	}
+
+	async componentWillUnmount() {
+		window.removeEventListener('scroll', this.onScroll, false);
+	}
+
+	onScroll = async () => {
+		if (
+			window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 &&
+			this.state.unParsedApiReviews.length
+		) {
+			this.loadMore();
+		}
+	};
+
+	loadMore = async () => {
+		if (this.state.hasMore) {
+			const { hasMore, reviews } = await getReviews(this.state.page + 1);
+			const newReviewsToParse = [ ...this.state.unParsedApiReviews, ...reviews ];
+			this.setState({
+				reviews: this.parseApiResults(newReviewsToParse),
+				hasMore,
+				unParsedApiReviews: newReviewsToParse,
+				page: this.state.page + 1
+			});
+		}
 	};
 
 	componentDidUpdate(prevProps, prevState) {
