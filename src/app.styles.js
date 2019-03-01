@@ -91,6 +91,7 @@ export const ReviewCard = styled.div`
 	border: 2px solid #f2f2f2;
 	border-radius: 10px;
 	padding: 30px;
+	margin: 10px 0;
 	.card-header {
 		margin: 0;
 		.item {

@@ -1,8 +1,14 @@
 import React from 'react';
 import { ReviewItemWrapper, ReviewCard } from '../app.styles';
 import { string, array, number, arrayOf, shape } from 'prop-types';
+import moment from 'moment';
 
-const ReviewItem = ({ date, stars, author, title, content }) => (
+const range = (start, end) => {
+	if (start === end) return [ start ];
+	return [ start, ...range(start + 1, end) ];
+};
+
+const ReviewItem = ({ reviewCreated, stars, author, title, content }) => (
 	<ReviewCard>
 		<div className="card-header row middle-xs">
 			<div className="item">
@@ -10,13 +16,13 @@ const ReviewItem = ({ date, stars, author, title, content }) => (
 			</div>
 			<div className="col-md-3 col-lg-2 col-sm-2 col-xs-4 item">
 				<span>DATE</span>
-				<p>{date}</p>
+				<p>{moment(reviewCreated).calendar()}</p>
 			</div>
 			<div className="col-md-4 col-lg-2 col-sm-3 col-xs-5 item">
 				<span>STARS</span>
 				<p>
-					{stars.map((item, i) => {
-						return <i className="mdi mdi-star" />;
+					{range(0, stars).map((item, i) => {
+						return <i className="mdi mdi-star" key={i}/>;
 					})}
 				</p>
 			</div>
@@ -33,19 +39,19 @@ export default class ReviewGroup extends React.Component {
 	static propTypes = {
 		reviews: arrayOf(
 			shape({
-				date: string.isRequired,
-				stars: arrayOf(number).isRequired,
+				reviewCreated: number.isRequired,
+				stars: number,
 				content: string.isRequired,
 				title: string.isRequired,
 				author: string
 			}).isRequired
 		).isRequired,
-		month: string.isRequired
+		group: string.isRequired
 	};
 	render() {
 		return (
 			<ReviewItemWrapper>
-				<p className="month">DECEMBER</p>
+				<p className="month">{this.props.group}</p>
 				{this.props.reviews.map((review, index) => <ReviewItem key={index} {...review} />)}
 			</ReviewItemWrapper>
 		);

@@ -11,21 +11,42 @@ import {
 } from './app.styles';
 import ReviewGroup from './components/ReviewItem';
 import StarSortItem from './components/StarSortItem';
-import { getReviews } from './functions';
+import { getReviews, groupReviews, filterReviews, sort } from './functions';
+import _ from 'lodash';
 
 class App extends Component {
 	state = {
 		reviews: [],
 		hasMore: false,
-		page: 1
+		page: 1,
+		sortType: 'mrf',
+		groupBy: '',
+		filterBy: 5,
+		unParsedApiReviews: []
 	};
 
 	async componentDidMount() {
 		const { hasMore, reviews } = await getReviews(this.state.page);
+		this.setState({
+			reviews: this.parseApiResults(reviews),
+			hasMore,
+			unParsedApiReviews: reviews
+		});
 	}
+
+	parseApiResults = (reviews) => {
+		const filteredReviews = filterReviews(reviews, this.state.filterBy);
+		const groupedReviews = groupReviews(filteredReviews, this.state.groupBy);
+		return sort(groupedReviews, this.state.sortType, 'key');
+	};
+
+	updateState = (key, value) => {
+		this.setState({ [key]: value });
+	};
+
 	render() {
-		const reviews = [ 1, 2, 3 ].map((item, i) => {
-			return <ReviewGroup reviews={[]} />;
+		const reviews = this.state.reviews.map((review, i) => {
+			return <ReviewGroup reviews={review.reviews} group={review.key} key={i} />;
 		});
 		return (
 			<AppWrapper>
@@ -39,15 +60,23 @@ class App extends Component {
 							</div>
 							<div className="row">
 								<div className="col-xs-6 col-md-6">
-									<Select>
-										<option>Group by</option>
+									<Select
+										value={this.state.groupBy}
+										onChange={(e) => this.updateState('groupBy', e.target.value)}
+									>
+										<option value="">Group by</option>
+										<option value="day">Day</option>
+										<option value="week">Week</option>
+										<option value="month">Month</option>
+										<option value="year">Year</option>
 									</Select>
 								</div>
 								<div className="col-xs-6 col-md-6">
-									<Select>
-										<option value="" selected={true}>
-											Order by
-										</option>
+									<Select
+										value={this.state.sortType}
+										onChange={(e) => this.updateState('sortType', e.target.value)}
+									>
+										<option value="">Order by</option>
 										<option value="mrf">Most recent first</option>
 										<option value="mrl">Most recent last</option>
 									</Select>
