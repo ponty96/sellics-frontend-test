@@ -1,19 +1,23 @@
 import React from 'react';
-import { string, func, bool } from 'prop-types';
+import { func, number } from 'prop-types';
 
 export default class StarSortItem extends React.Component {
 	static propTypes = {
-		isChecked: bool.isRequired,
+		selectedRating: number.isRequired,
 		onCheckChange: func.isRequired,
-		ranking: string.isRequired
+		rating: number.isRequired
 	};
 	render() {
-		const { isChecked, onCheckChange, ranking } = this.props;
+		const { selectedRating, onCheckChange, rating } = this.props;
 		return (
 			<React.Fragment>
-				<input type="checkbox" defaultChecked={isChecked} onChange={() => onCheckChange(ranking)} />
+				<input
+					type="checkbox"
+					checked={rating <= selectedRating ? true : false}
+					onChange={() => onCheckChange(rating)}
+				/>
 				<span>
-					{ranking}
+					{rating}
 					<i className="mdi mdi-star" />
 				</span>
 			</React.Fragment>
