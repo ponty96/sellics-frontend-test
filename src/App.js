@@ -14,14 +14,17 @@ import StarSortItem from './components/StarSortItem';
 import { getReviews, groupReviews, filterReviews, sort } from './functions';
 import _ from 'lodash';
 
+const DEFAULT_FILTER_PARAMS = {
+	page: 1,
+	sortType: 'mrf',
+	groupBy: '',
+	filterBy: 5
+};
 class App extends Component {
 	state = {
 		reviews: [],
 		hasMore: false,
-		page: 1,
-		sortType: 'mrf',
-		groupBy: '',
-		filterBy: 5,
+		...DEFAULT_FILTER_PARAMS,
 		unParsedApiReviews: []
 	};
 
@@ -42,6 +45,18 @@ class App extends Component {
 
 	updateState = (key, value) => {
 		this.setState({ [key]: value });
+	};
+
+	updateRating = (value) => {
+		this.setState({
+			filterBy: value
+		});
+	};
+
+	refresh = () => {
+		this.setState({
+			...DEFAULT_FILTER_PARAMS
+		});
 	};
 
 	componentDidUpdate(prevProps, prevState) {
@@ -109,11 +124,31 @@ class App extends Component {
 								<div className="col-xs-12 col-md-12">
 									<span className="">FILTER BY</span>
 									<CheckboxWrapper>
-										<StarSortItem ranking="1" />
-										<StarSortItem ranking="2" />
-										<StarSortItem ranking="3" />
-										<StarSortItem ranking="4" />
-										<StarSortItem ranking="5" />
+										<StarSortItem
+											rating={1}
+											selectedRating={this.state.filterBy}
+											onCheckChange={this.updateRating}
+										/>
+										<StarSortItem
+											rating={2}
+											selectedRating={this.state.filterBy}
+											onCheckChange={this.updateRating}
+										/>
+										<StarSortItem
+											rating={3}
+											selectedRating={this.state.filterBy}
+											onCheckChange={this.updateRating}
+										/>
+										<StarSortItem
+											rating={4}
+											selectedRating={this.state.filterBy}
+											onCheckChange={this.updateRating}
+										/>
+										<StarSortItem
+											rating={5}
+											selectedRating={this.state.filterBy}
+											onCheckChange={this.updateRating}
+										/>
 									</CheckboxWrapper>
 								</div>
 							</RatingsFilter>
@@ -123,7 +158,7 @@ class App extends Component {
 						<div className="col-xs-12 col-md-12">
 							<div className="row end-xs">
 								<div className="col-xs-12 col-md-12">
-									<Button>REFRESH</Button>
+									<Button onClick={this.refresh}>REFRESH</Button>
 								</div>
 							</div>
 							{reviews}
