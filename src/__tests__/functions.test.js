@@ -1,4 +1,4 @@
-import { sort, sortMostRecentFirst, sortMostRecentLast } from '../functions';
+import { sort, sortMostRecentFirst, sortMostRecentLast, filterReviews } from '../functions';
 import { PAGE_1_DATA } from '../dummy-data';
 
 const REVIEWS = PAGE_1_DATA.reviews;
@@ -32,4 +32,21 @@ test('sorts reviews by date based on sort type passed', () => {
 
 	expect(sortItemsByMostRecentFirst).toEqual(sortMostRecentFirst(REVIEWS));
 	expect(sortItemsByMostRecentLast).toEqual(sortMostRecentLast(REVIEWS));
+});
+
+Array.prototype.random = function() {
+	return this[Math.floor(Math.random() * this.length)];
+};
+
+test('filters reviews based on stars', () => {
+	const fiveStarReviews = filterReviews(REVIEWS, '5');
+	const threeStarReviews = filterReviews(REVIEWS, 3);
+	const fourStarReviews = filterReviews(REVIEWS, 4);
+
+	expect(fiveStarReviews).toHaveLength(13);
+	expect(threeStarReviews).toHaveLength(6);
+	expect(fourStarReviews).toHaveLength(1);
+
+	expect(fiveStarReviews.random().stars).toEqual(5)
+	expect(fourStarReviews.random().stars).toEqual(4)
 });
